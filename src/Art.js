@@ -1,9 +1,10 @@
 import React, { Component } from "react";
-import {Pane, RadioGroup,Card, Heading, Label, Textarea, Button, Spinner} from 'evergreen-ui';
+import {Pane, RadioGroup,Card, Heading, Label, Textarea, Button, Spinner,TextInput, Alert} from 'evergreen-ui';
 import { Spring,config } from "react-spring/renderprops";
 
 class Art extends Component {
 
+  server = "ec2-52-38-158-127.us-west-2.compute.amazonaws.com"
   state = {
     options: [
       { label: 'Pre-generated artwork', value:'auto', checked:false},
@@ -17,26 +18,39 @@ class Art extends Component {
     generateButtonDisabled:true,
     loading:null,
     poemChoice:null,
-    result:null
+    result:null,
+    email:null,
+    done:null
+  }
+
+  displayImage(response){
+    console.log(response)
+    this.setState({loading:false,
+                    result:response['imagestr']
+                  })
   }
 
   generateCustom(){
-    this.setState({loading:true})
+    this.setState({loading:true,result:null,done:null})
     const data = new FormData()
     data.append('poem', this.state.customPoem)
 
-    fetch(`http://127.0.0.1:5000/generateCustom`, {
+    fetch(`http://${this.server}:5000/generateCustom`, {
           method: ['POST'],
           body: data
-      }).then(this.setState({loading:false}))
+      }).then(res =>{
+              return res.json()
+              }).then(response => {
+                  this.displayImage(response)
+                      })
   }
 
   generateAuto(){
-    this.setState({loading:true})
+    this.setState({loading:true,result:null,done:null})
     const data = new FormData()
     data.append('poemId', this.state.poemChoice)
 
-    fetch(`http://127.0.0.1:5000/getArt`, {
+    fetch(`http://${this.server}:5000/getArt`, {
           method: ['POST'],
           body: data
       }).then(res =>{
@@ -46,6 +60,23 @@ class Art extends Component {
                           result:response['success']
                         })
                       })
+  }
+
+  sendEmail(){
+    console.log("here")
+    console.log(this.state)
+    const data = new FormData()
+    data.append('email', this.state.email)
+
+    fetch(`http://${this.server}:5000/sendEmail`, {
+          method: ['POST'],
+          body: data
+      }).then(res => {
+        this.setState({done:true
+                      })
+                }
+                )
+
   }
 
   validatePoem(text){
@@ -59,6 +90,26 @@ class Art extends Component {
     }
   }
 
+  emailPane = () =>{
+    return(
+      <div>
+        <img src={"data:image/png;base64," + this.state.result}/>
+          <Pane display="flex" alignItems="center" justifyContent="center" height={50} marginTop={30}>
+          <Label color='#FFF' marginTop={10} display="block"> Enter your email  to receive a copy of the generated image </Label>
+            <TextInput
+            height={40}
+            name="email-id"
+            placeholder="Enter email-id"
+            marginLeft={10}
+            onChange={e => this.setState({email:e.target.value})}
+          />
+        </Pane>
+        <Button appearance='primary' height={40} iconBefore='download' intent='success' onClick={()=>this.sendEmail()}> Send Email </Button>
+        {this.state.done!==null?(<Alert intent='success' title='Email sent successfully'/>):null}
+      </div>
+    )
+  }
+
   resultImage(){
     return (
       <Spring
@@ -68,8 +119,10 @@ class Art extends Component {
         >
         { props => (
         <div className='primary' style={props}>
+        <Heading size={700}> Step 3 - Voila!</Heading>
           <Pane display="flex" alignItems="center" justifyContent="center" height={400}>
             {this.state.loading? <Spinner size={48}/> : null}
+            {this.state.result? this.emailPane():null}
           </Pane>
         </div>
       )}
