@@ -4,6 +4,7 @@ import time
 import os
 import base64
 from flask_mail import Mail, Message
+from PIL import Image
 
 app = flask.Flask(__name__)
 mail_settings = {
@@ -40,6 +41,10 @@ def generateImageFromPoem():
     # time.sleep(10)
 
     generated_image_path = "../models/coco_AttnGAN2/example_captions/0_s_0_g2.png"
+    img = Image.open(generated_image_path)
+    img.resize((720,720),Image.NEAREST)
+    Image.save(generated_image_path,format='PNG')
+
     results['imagestr'] = convertImage2String(generated_image_path)
 
     results['success'] = True
