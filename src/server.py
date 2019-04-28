@@ -33,7 +33,7 @@ def generateImageFromPoem():
 
     poem = poem.replace("\n","")
     caption_path = "../data/coco/example_captions.txt"
-    with open(caption_path,"w") as o:
+    with open(caption_path, "w") as o:
         o.write(poem)
 
     os.system("python main.py --cfg cfg/eval_coco.yml --gpu 0")
@@ -62,12 +62,29 @@ def getArt():
 def sendEmail():
     results = {'success': False}
     email = flask.request.form['email']
+    choice = flask.request.form['choice']
+    poem = flask.request.form['poem']
+
+    # TODO : get existing poem in case choice=='auto'
+    if choice == 'auto':
+        pass
+
+    msg_body =  """
+                    Here is your generated art from ArtForML Spring 2019 exhibition! Cheers!\n
+                    The poem you chose was : {0}\n
+
+                    Thank you,\n
+                    Prajwal Prakash Vasisht\n
+                    Sunil Kumar\n
+                    Yashovardhan Charturvedi
+                """.format(poem)
+
 
     with app.app_context():
         msg = Message(subject="Generated ART",
                       sender=app.config.get("MAIL_USERNAME"),
-                      recipients=[email], # replace with your email for testing
-                      body="Here is your generated art from ArtForML Spring 2019 exhibition! Cheers!")
+                      recipients=[email],
+                      body=msg_body)
 
     with app.open_resource("../models/coco_AttnGAN2/example_captions/0_s_0_g2.png") as fp:
         msg.attach("image.png", "image/png", fp.read())

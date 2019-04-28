@@ -4,7 +4,7 @@ import { Spring,config } from "react-spring/renderprops";
 
 class Art extends Component {
 
-  server = "ec2-52-38-158-127.us-west-2.compute.amazonaws.com"
+  server = "ec2-54-184-43-21.us-west-2.compute.amazonaws.com"
   state = {
     options: [
       { label: 'Pre-generated artwork', value:'auto', checked:false},
@@ -20,13 +20,15 @@ class Art extends Component {
     poemChoice:null,
     result:null,
     email:null,
-    done:null
+    done:null,
+    start_again_disabled:true
   }
 
   displayImage(response){
     console.log(response)
     this.setState({loading:false,
-                    result:response['imagestr']
+                    result:response['imagestr'],
+                    start_again_disabled:false,
                   })
   }
 
@@ -57,16 +59,20 @@ class Art extends Component {
               return res.json()
               }).then(response => {
           this.setState({loading:false,
+                          start_again_disabled:false,
                           result:response['success']
                         })
                       })
   }
 
   sendEmail(){
-    console.log("here")
-    console.log(this.state)
     const data = new FormData()
     data.append('email', this.state.email)
+    data.append('choice',this.state.choice)
+    if (this.state.choice == 'custom')
+      data.append('poem', this.state.customPoem)
+    else
+      data.append('poem',this.state.poemChoice)
 
     fetch(`http://${this.server}:5000/sendEmail`, {
           method: ['POST'],
@@ -76,7 +82,6 @@ class Art extends Component {
                       })
                 }
                 )
-
   }
 
   validatePoem(text){
@@ -110,6 +115,18 @@ class Art extends Component {
     )
   }
 
+  reset(){
+    this.setState({choice:null,
+    customPoem:null,
+    generateButtonDisabled:true,
+    loading:null,
+    poemChoice:null,
+    result:null,
+    email:null,
+    done:null,
+  start_again_disabled:true,})
+  }
+
   resultImage(){
     return (
       <Spring
@@ -124,6 +141,8 @@ class Art extends Component {
             {this.state.loading? <Spinner size={48}/> : null}
             {this.state.result? this.emailPane():null}
           </Pane>
+          <Button appearance='primary' height={60} iconBefore='replay'
+           disabled={this.state.start_again_disabled} onClick={()=>this.reset()}> Start Again! </Button>
         </div>
       )}
     </Spring>
@@ -179,6 +198,18 @@ class Art extends Component {
       </Spring>
   )}
 
+  choice_change(value){
+    this.setState({ choice:value,
+      customPoem:null,
+      generateButtonDisabled:true,
+      loading:null,
+      poemChoice:null,
+      result:null,
+      email:null,
+      done:null,
+    start_again_disabled:true,})
+  }
+
   render() {
     return (
       <div>
@@ -208,7 +239,7 @@ class Art extends Component {
                   size={16}
                   label="Choose a pre-existing artwork we've generated or enter in a poem of your choice and see what our network can create!"
                   options={this.state.options}
-                  onChange={value => this.setState({ choice:value })}
+                  onChange={value => this.choice_change(value)}
                   isRequired={true}
                   color='#FFF'
                   />
