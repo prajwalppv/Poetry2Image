@@ -18,7 +18,7 @@ class Main extends Component {
           <Heading is='h1' size={800} align='center'>Poetry & Art</Heading>
           <ul className="header">
           <li><NavLink exact to="/">Home</NavLink></li>
-          <li><NavLink to="/art">Generate Art</NavLink></li>
+          <li><NavLink to="/art">Generate Your Own!</NavLink></li>
           </ul>
           <div className="content">
             <Route exact path="/" component={Home}/>

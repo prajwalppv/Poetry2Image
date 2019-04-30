@@ -77,10 +77,7 @@ class Art extends Component {
     const data = new FormData()
     data.append('email', this.state.email)
     data.append('choice',this.state.choice)
-    if (this.state.choice == 'custom')
-      data.append('poem', this.state.customPoem)
-    else
-      data.append('poem',this.state.poemChoice)
+    data.append('poem', this.state.customPoem)
 
     fetch(`http://${this.server}:5000/sendEmail`, {
           method: ['POST'],
