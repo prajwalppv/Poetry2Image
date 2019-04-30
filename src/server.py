@@ -42,8 +42,9 @@ def generateImageFromPoem():
 
     generated_image_path = "../models/coco_AttnGAN2/example_captions/0_s_0_g2.png"
     img = Image.open(generated_image_path)
-    img.resize((720,720),Image.NEAREST)
-    Image.save(generated_image_path,format='PNG')
+    img = img.resize((720,720),Image.NEAREST)
+    print(img.size)
+    img.save(generated_image_path,format='PNG')
 
     results['imagestr'] = convertImage2String(generated_image_path)
 
@@ -75,12 +76,12 @@ def sendEmail():
         pass
 
     msg_body =  """
-                    Here is your generated art from ArtForML Spring 2019 exhibition! Cheers!\n
-                    The poem you chose was : {0}\n
+                    Here is your generated art from ArtForML Spring 2019 exhibition! Cheers!
+                    The poem was : {0}
 
-                    Thank you,\n
-                    Prajwal Prakash Vasisht\n
-                    Sunil Kumar\n
+                    Thank you,
+                    Prajwal Prakash Vasisht
+                    Sunil Kumar
                     Yashovardhan Charturvedi
                 """.format(poem)
 

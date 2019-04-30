@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import {Pane, RadioGroup,Card, Heading, Label, Textarea, Button, Spinner,TextInput, Alert} from 'evergreen-ui';
+import {Pane, RadioGroup,Card, Heading, Label, Textarea, Button, Spinner,TextInput, Alert, toaster} from 'evergreen-ui';
 import { Spring,config } from "react-spring/renderprops";
 
 class Art extends Component {
 
-  server = "ec2-54-184-43-21.us-west-2.compute.amazonaws.com"
+  server = "ec2-35-167-30-160.us-west-2.compute.amazonaws.com"
   state = {
     options: [
       { label: 'Pre-generated artwork', value:'auto', checked:false},
@@ -25,7 +25,6 @@ class Art extends Component {
   }
 
   displayImage(response){
-    console.log(response)
     this.setState({loading:false,
                     result:response['imagestr'],
                     start_again_disabled:false,
@@ -44,7 +43,11 @@ class Art extends Component {
               return res.json()
               }).then(response => {
                   this.displayImage(response)
-                      })
+                }).catch(e => {
+                  toaster.danger(
+                    "Oops! something seems to have gone wrong. Please refresh the page and try again"
+                  )
+                })
   }
 
   generateAuto(){
@@ -62,6 +65,10 @@ class Art extends Component {
                           start_again_disabled:false,
                           result:response['success']
                         })
+                      }).catch(e => {
+                        toaster.danger(
+                          "Oops! something seems to have gone wrong. Please refresh the page and try again"
+                        )
                       })
   }
 
@@ -79,9 +86,14 @@ class Art extends Component {
           body: data
       }).then(res => {
         this.setState({done:true
-                      })
+        });
+        toaster.success('Email sent successfully');
                 }
-                )
+                ).catch(e => {
+                  toaster.danger(
+                    "Oops! something seems to have gone wrong. Please refresh the page and try again"
+                  )
+                })
   }
 
   validatePoem(text){
@@ -97,20 +109,20 @@ class Art extends Component {
 
   emailPane = () =>{
     return(
-      <div>
-        <img src={"data:image/png;base64," + this.state.result}/>
-          <Pane display="flex" alignItems="center" justifyContent="center" height={50} marginTop={30}>
-          <Label color='#FFF' marginTop={10} display="block"> Enter your email  to receive a copy of the generated image </Label>
-            <TextInput
+      <div style={{align:'center', position: 'relative', height: '100%', width: '100%'}}>
+        <img style={{position: 'relative', height:'80%', width:'auto'}} src={"data:image/png;base64," + this.state.result}/>
+        <Label color='#FFF' marginTop={10} display="block"> Enter your email  to receive a copy of the generated image </Label>
+        <TextInput
+            style={{float:'left'}}
             height={40}
             name="email-id"
             placeholder="Enter email-id"
             marginLeft={10}
-            onChange={e => this.setState({email:e.target.value})}
-          />
-        </Pane>
-        <Button appearance='primary' height={40} iconBefore='download' intent='success' onClick={()=>this.sendEmail()}> Send Email </Button>
-        {this.state.done!==null?(<Alert intent='success' title='Email sent successfully'/>):null}
+            onChange={e => this.setState({email:e.target.value})}/>
+        <Button appearance='primary' height={40} iconBefore='download' intent='success'
+              onClick={()=>this.sendEmail()}> Send Email </Button>
+        <Button style={{marginLeft:10}} appearance='primary' height={40} iconBefore='replay'
+              disabled={this.state.start_again_disabled} onClick={()=>this.reset()}> Start Again! </Button>
       </div>
     )
   }
@@ -136,13 +148,11 @@ class Art extends Component {
         >
         { props => (
         <div className='primary' style={props}>
-        <Heading size={700}> Step 3 - Voila!</Heading>
+        <Heading size={700}> Voila!</Heading>
           <Pane display="flex" alignItems="center" justifyContent="center" height={400}>
             {this.state.loading? <Spinner size={48}/> : null}
             {this.state.result? this.emailPane():null}
           </Pane>
-          <Button appearance='primary' height={60} iconBefore='replay'
-           disabled={this.state.start_again_disabled} onClick={()=>this.reset()}> Start Again! </Button>
         </div>
       )}
     </Spring>
@@ -151,6 +161,7 @@ class Art extends Component {
 
   custom = () => {
     return (
+      <div>
       <Spring
         from={{ opacity: 0.6, marginTop: -20 }}
         to={{ opacity: 1, marginTop: 20 }}
@@ -158,8 +169,7 @@ class Art extends Component {
         >
         { props => (
         <div className='primary' style={props}>
-          <Heading size={700}> Step 2</Heading>
-          <Label htmlFor="textarea-2" color='#FFF' marginTop={10} display="block"> Enter a poem below. </Label>
+          <Heading size={700}> Enter a poem below </Heading>
           <Textarea name="customPoem"
           placeholder="Roses are red, violets are blue, here's an example poem, you can write your own too!"
           marginTop={10}
@@ -169,6 +179,25 @@ class Art extends Component {
         </div>
       )}
       </Spring>
+
+      <Spring
+        from={{ opacity: 0.6, marginTop: -20 }}
+        to={{ opacity: 1, marginTop: 20 }}
+        config={config.slow}
+        >
+        { props => (
+        <div className='primary' style={props}>
+          <Heading size={700}> Example poems </Heading>
+            <ol>
+           <li><p>The Sea that bares her bosom to the moon.
+           The winds that will be howling at all hours</p></li>
+           <li><p>The wind blows, I breathe deeply, I close my eyes so tight, I can barely see light</p></li>
+           <li> <p>The elephant is a thing to behold, with colors more beautiful than gold.</p></li>
+            </ol>
+        </div>
+      )}
+      </Spring>
+      </div>
   )}
 
   auto = () => {
@@ -225,31 +254,12 @@ class Art extends Component {
       )}
       </Spring>
 
-        <Spring
-          from={{ opacity: 0.6, marginTop: -20 }}
-          to={{ opacity: 1, marginTop: 20 }}
-          config={config.slow}
-          >
-        {props => (<div className='primary' style={props}>
-            <Card>
-                <Heading size={700}> Step 1</Heading>
-                <RadioGroup
-                  marginTop={5}
-                  defaultValue='null'
-                  size={16}
-                  label="Choose a pre-existing artwork we've generated or enter in a poem of your choice and see what our network can create!"
-                  options={this.state.options}
-                  onChange={value => this.choice_change(value)}
-                  isRequired={true}
-                  color='#FFF'
-                  />
-            </Card>
-          </div>
-        )}
-        </Spring>
+      <div style={{float: 'left', width: '49%'}} children={this.custom()}>
 
-        {this.state.choice!==null && (this.state.choice==='custom' ? this.custom(): this.auto())}
-        {this.state.loading!==null ? this.resultImage(): null}
+        </div>
+        <div style={{float: 'right', width: '49%'}}>
+          {this.state.loading!==null ? this.resultImage(): null}
+        </div>
     </div>
     );
   }

@@ -6,9 +6,12 @@
     "evergreen-ui": "^4.15.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-dropdown-input": "^0.1.11",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.0",
     "react-sidebar": "^3.0.2",
+    "react-slideshow-image": "^1.1.5",
+    "react-slidez": "0.0.31",
     "react-spring": "^8.0.19",
     "react-transition-group": "^4.0.0"
   },
