@@ -4,7 +4,7 @@ import { Spring,config } from "react-spring/renderprops";
 
 class Art extends Component {
 
-  server = "ec2-35-167-30-160.us-west-2.compute.amazonaws.com"
+  server = "ec2-54-212-99-84.us-west-2.compute.amazonaws.com"
   state = {
     options: [
       { label: 'Pre-generated artwork', value:'auto', checked:false},
@@ -32,6 +32,7 @@ class Art extends Component {
   }
 
   generateCustom(){
+    toaster.notify("Takes about 10 seconds. Hold tight!")
     this.setState({loading:true,result:null,done:null})
     const data = new FormData()
     data.append('poem', this.state.customPoem)
