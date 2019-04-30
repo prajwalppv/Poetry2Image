@@ -76,7 +76,7 @@ class Art extends Component {
   sendEmail(){
     const data = new FormData()
     data.append('email', this.state.email)
-    data.append('choice',this.state.choice)
+    data.append('choice','custom')
     data.append('poem', this.state.customPoem)
 
     fetch(`http://${this.server}:5000/sendEmail`, {
