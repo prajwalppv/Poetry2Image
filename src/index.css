@@ -54,14 +54,15 @@ Label{
 
 .primary2 {
   background-color: #1D2731;
-  padding: 20px;
   height: 680px;
   width: 100%;
   float:'right';
   color:#FFF;
   text-align: center;
-  font-size: 2em;
+  font-size: 1.5em;
   font-family: fantasy;
+  padding-top: 20px;
+  padding-bottom: 20px;
   /* vertical-align: middle; */
   /* line-height: 200px; */
   white-space: pre-wrap;

@@ -84,10 +84,10 @@ const getSlides = () => {
   for (let i=0; i<fadeImages.length; i++){
     let text = '\n\n' + slideText[i]
     slides.push( <div className="each-fade">
-                  <img style={{float:'left', width:'auto'}} className='image-container' src={fadeImages[i]} />
                   <div style={{float:'left', width:'30%'}}>
                     <div className='primary2'>{text}</div>
                   </div>
+                  <img style={{float:'left', width:'auto'}} className='image-container' src={fadeImages[i]} />
                   </div>)
   }
   return slides
@@ -98,11 +98,11 @@ class Home extends Component {
     return (
       <div>
         <div style={{height:20, textAlign: 'center'}}>
+          <div className='titles' style={{float:'left', width:'30%'}}>
+            <strong>POEM</strong>
+          </div>
           <div className='titles' style={{float:'left', width:720, marginRight:2}}>
               <strong>GENERATED IMAGE</strong>
-          </div>
-          <div className='titles' style={{float:'left', width:'30%', paddingLeft:10, paddingRight:10}}>
-            <strong>POEM</strong>
           </div>
         </div>
         <Fade {...fadeProperties} children={getSlides()}/>
