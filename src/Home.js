@@ -16,6 +16,7 @@ const fadeImages = [
   'images/8.png',
   'images/9.png',
   'images/10.png',
+  'images/11.png',
 
 ];
 
@@ -70,6 +71,11 @@ joy.`,
 
 `The butterfly is a thing to behold,
 with colors more beautiful than gold.`,
+
+`Three rings for the pasta, under the sky
+Four for the trees, in their halls of stone
+And nine for the mortal fish, doomed to leaves
+In the land of Mordor, where the shadows lie`,
 ]
 
 const fadeProperties = {
